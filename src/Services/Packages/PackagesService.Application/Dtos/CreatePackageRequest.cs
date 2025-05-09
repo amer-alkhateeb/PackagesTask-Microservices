@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PackagesService.Application.Dtos
+﻿namespace PackagesService.Application.Dtos
 {
-    internal class CreatePackageRequest
+    public record CreatePackageRequest(string Sender, string Recipient, double Weight, string City, string Street, string Zip)
     {
     }
 }

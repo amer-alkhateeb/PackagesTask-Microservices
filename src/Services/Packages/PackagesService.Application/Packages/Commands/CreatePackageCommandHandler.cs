@@ -2,11 +2,10 @@
 using PackagesService.Application.Interfaces;
 using PackagesService.Domain.Models;
 using PackagesService.Domain.ValueObjects;
-using System.Net.Http.Headers;
 
 namespace PackagesService.Application.Packages.Commands
 {
-    public sealed class CreatePackageCommandHandler : ICommandHandler<CreatePackageCommand, CreatePacakgeCommandResponse>
+    public sealed class CreatePackageCommandHandler : ICommandHandler<CreatePackageCommand, CreatePackageCommandResponse>
     {
         private readonly IPackageRepository _packageRepository;
 
@@ -14,17 +13,17 @@ namespace PackagesService.Application.Packages.Commands
         {
             _packageRepository = packagerepository;
         }
-        public async Task<CreatePacakgeCommandResponse> Handle(CreatePackageCommand request, CancellationToken cancellationToken)
+        public async Task<CreatePackageCommandResponse> Handle(CreatePackageCommand request, CancellationToken cancellationToken)
         {
             Package package = Package.Of(
                 request.Sender,
                 request.Recipient,
                 Weight.Of(request.Weight),
-                Address.Of(request.Street, request.City, request.ZIP)
+                Address.Of(request.Street, request.City, request.Zip)
             );
 
             await _packageRepository.AddAsync(package, cancellationToken);
-            return new CreatePacakgeCommandResponse(package.Id);
+            return new CreatePackageCommandResponse(package.Id);
         }
     }
 

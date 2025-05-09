@@ -10,6 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{4DA66D9E-1F62-4B15-9F0B-85F0D881DEC4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Packages", "Packages", "{6E36A855-775E-4D37-9CD1-F9BC38BD3725}"
+	ProjectSection(SolutionItems) = preProject
+		task.txt = task.txt
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PackagesService.Application", "src\Services\Packages\PackagesService.Application\PackagesService.Application.csproj", "{03BAB233-F4B0-4111-AE2F-0A3E6F74A75E}"
 EndProject

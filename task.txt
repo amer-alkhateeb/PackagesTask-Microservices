@@ -1,0 +1,74 @@
+﻿Objective:
+
+Build a Dockerized .NET 9 microservices-based application for handling package deliveries, adhering to Clean Architecture and Domain-Driven Design (DDD) principles, using MediatR, EF Core, and PostgreSQL.
+📦 Service: PackagesService
+🧩 Domain Model: Package
+
+    Id: Unique identifier (strongly typed PackageId)
+
+    Sender: string
+
+    Recipient: string
+
+    Weight: value object (Weight in kg)
+
+    Destination: value object (Address)
+
+        Street
+
+        City
+
+        ZIP
+
+✅ Functional Requirements
+1. Create a Package
+
+    HTTP POST /api/packages
+
+    Accepts a payload to create a new package
+
+    Stores it in the PostgreSQL database
+
+2. List All Packages
+
+    HTTP GET /api/packages
+
+    Returns a list of all stored packages
+
+🧱 Architectural Requirements
+
+    Clean Architecture separation:
+
+        Domain – entities, value objects, aggregates, strongly typed IDs
+
+        Application – use cases (commands/queries), interfaces, MediatR handlers
+
+        Infrastructure – EF Core + PostgreSQL, Migrations, Persistence
+
+        API – ASP.NET Core Web API project
+
+    Use CQRS with MediatR
+
+    Use EF Core 9 with PostgreSQL
+
+    Support for Swagger/OpenAPI
+
+⚙️ DevOps / Runtime Requirements
+
+    Entire system should run via Docker
+
+    Use Docker Compose to run:
+
+        The Web API (PackagesService.API)
+
+        The database (PostgreSQL)
+
+✅ Bonus (optional)
+
+    Unit Tests (for application layer)
+
+    Validation (e.g., FluentValidation)
+
+    Logging and Exception handling middleware
+
+    OpenAPI documentation as default homepage

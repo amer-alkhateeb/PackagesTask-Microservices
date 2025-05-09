@@ -5,7 +5,7 @@
         public double Kilograms { get;  }
         private const double MinWeight = 0.1;
 
-
+        private Weight() { }
         private Weight(double kilograms)
         {
             if (kilograms < MinWeight)

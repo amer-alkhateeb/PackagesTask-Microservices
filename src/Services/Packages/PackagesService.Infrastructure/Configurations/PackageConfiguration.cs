@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PackagesService.Domain.Models;
 using PackagesService.Domain.ValueObjects;
 
-namespace PackagesTask.Infrastructure.Configurations
+namespace PackagesService.Infrastructure.Configurations
 {
     public class PackageConfiguration : IEntityTypeConfiguration<Package>
     {

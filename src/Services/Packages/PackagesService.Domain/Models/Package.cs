@@ -16,6 +16,7 @@ namespace PackagesService.Domain.Models
         }
         private Package(PackageId id, string sender, string recipient, Weight weight, Address destination)
         {
+            Id = id;
             Sender = sender;
             Recipient = recipient;
             Weight = weight;
@@ -30,11 +31,11 @@ namespace PackagesService.Domain.Models
             ArgumentException.ThrowIfNullOrWhiteSpace(recipient);
             ArgumentException.ThrowIfNullOrWhiteSpace(weight.ToString());
             ArgumentException.ThrowIfNullOrWhiteSpace(destination.ToString());
-            var id = PackageId.Create();
-            var order = new Package(id, sender, recipient, weight, destination);
+            PackageId id = PackageId.Create();
+            Package package = new(id, sender, recipient, weight, destination);
 
-            order.AddDomainEvent(new PackageCreatedEvent(id));
-            return order;
+            package.AddDomainEvent(new PackageCreatedEvent(id));
+            return package;
         }
     }
 }

@@ -1,13 +1,8 @@
 ﻿using PackagesService.Application.Interfaces;
 using PackagesService.Domain.Models;
 using PackagesService.Domain.ValueObjects;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace PackagesTask.Infrastructure.Persistence
+namespace PackagesService.Infrastructure.Persistence
 {
     public class PackagesRepository : IPackageRepository
     {

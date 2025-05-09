@@ -5,6 +5,7 @@
         public string Street { get; private set; } = default!;
         public string City { get; private set; } = default!;
         public string ZIP { get; private set; } = default!;
+        private Address() { }
         private Address(string street, string city, string zip)
         {
             Street = street;

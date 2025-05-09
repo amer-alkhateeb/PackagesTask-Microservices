@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PackagesService.Domain.Models;
 
-namespace PackagesTask.Infrastructure.Persistence
+namespace PackagesService.Infrastructure.Persistence
 {
     public class PackageDbContext : DbContext
     {
