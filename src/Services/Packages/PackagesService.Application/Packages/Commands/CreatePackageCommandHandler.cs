@@ -23,7 +23,7 @@ namespace PackagesService.Application.Packages.Commands
             );
 
             await _packageRepository.AddAsync(package, cancellationToken);
-            return new CreatePackageCommandResponse(package.Id);
+            return new CreatePackageCommandResponse(package.Id.Value);
         }
     }
 

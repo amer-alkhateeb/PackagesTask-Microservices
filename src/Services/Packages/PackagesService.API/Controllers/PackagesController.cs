@@ -29,7 +29,7 @@ namespace PackagesService.API.Controllers
 
             var response = result.Adapt<CreatePackageCommandResponse>();
 
-            return CreatedAtAction("Create", new { id = response.PackageId.Value }, response);
+            return CreatedAtAction("Create", new { id = response.Id }, response);
         }
 
 
