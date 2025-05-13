@@ -13,11 +13,11 @@ namespace PackagesService.Infrastructure.Persistence
         }
         public async Task AddAsync(Package package, CancellationToken cancellationToken)
         {
-          await _dbContext.AddAsync(package);
+          await _dbContext.AddAsync(package, cancellationToken);
           await _dbContext.SaveChangesAsync(cancellationToken);
         }
 
-        public async Task<Package?> GetByIdAsync(PackageId id, CancellationToken cancellationToken)
+        public async Task<Package?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
         {
             return  await _dbContext.packages.FindAsync(id, cancellationToken);
         }

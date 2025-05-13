@@ -1,0 +1,151 @@
+﻿DeliveryService Microservice
+🎯 Objective:
+
+Create a second microservice called DeliveryService, responsible for managing delivery routes, truck assignments, and tracking delivery progress. This service should extend the logic of the PackagesService and demonstrate inter-service communication using RabbitMQ, while maintaining Clean Architecture, DDD, and CQRS principles.
+🧱 Base Requirements
+🗂️ Architecture
+
+Use the same structure as in PackagesService, with the following layers:
+
+    Domain: Aggregates, ValueObjects, Enums, StronglyTypedIds
+
+    Application: Commands/Queries, DTOs, Interfaces
+
+    Infrastructure: SQL Server, Repositories, Persistence
+
+    API: RESTful controllers, Swagger
+
+🔧 Tech Stack
+
+    .NET 9
+
+    EF Core 9
+
+    SQL Server
+
+    MediatR
+
+    RabbitMQ (communication with PackagesService)
+
+    Serilog or similar structured logging
+
+    Custom exception middleware
+
+    Dockerized with Docker Compose
+
+🧠 Domain Model
+Aggregate Root: DeliveryRoute
+
+    RouteId (strongly typed)
+
+    Date
+
+    AssignedDriverId (FK)
+
+    AssignedTruckId (FK)
+
+    List of Deliveries (navigation collection)
+
+Entity: Delivery
+
+    DeliveryId
+
+    PackageId (from PackagesService)
+
+    Status (Enum: Scheduled, OutForDelivery, Delivered, Failed)
+
+    EstimatedTime
+
+    ActualTime
+
+    TrackingCode
+
+Entity: Truck
+
+    TruckId
+
+    RegistrationNumber
+
+    CapacityKg
+
+    AvailableFrom / NextAvailableAt
+
+Entity: Driver
+
+    DriverId
+
+    FullName
+
+    Phone
+
+    CurrentLocation
+
+Value Object: GeoLocation
+
+    Latitude
+
+    Longitude
+
+📬 Inter-Service Messaging (RabbitMQ)
+
+When a package is created in PackagesService, it should publish a PackageCreatedEvent.
+
+The DeliveryService should:
+
+    Subscribe to this event via RabbitMQ
+
+    Automatically create a Delivery record associated with the incoming PackageId
+
+📋 Functional Requirements
+✅ Create Route
+
+    HTTP POST /api/routes
+
+    Accepts list of PackageIds, finds suitable truck/driver, schedules delivery route
+
+✅ List Routes
+
+    HTTP GET /api/routes
+
+    Optional filters: driver, date, status
+
+✅ Track Delivery
+
+    HTTP GET /api/deliveries/{trackingCode}
+
+✅ Mark Delivery as Completed
+
+    HTTP PATCH /api/deliveries/{id}/status
+
+    Accepts new Status and ActualTime
+
+🔧 Infrastructure
+
+    Use SQL Server for persistence (via Docker)
+
+    Add Serilog for structured logging (console + optionally file)
+
+    Use RabbitMQ for consuming messages from PackagesService
+
+    Implement Global Exception Middleware
+
+📦 Docker Setup
+Docker Compose
+
+    SQL Server container
+
+    RabbitMQ container (shared with PackagesService)
+
+    DeliveryService.API container
+
+✅ Bonus (Optional)
+
+    FluentValidation for commands
+
+    Health Checks
+
+    Prometheus metrics
+
+    Retry mechanism for RabbitMQ consumer
+
+    Unit tests for Application layer

@@ -6,6 +6,6 @@ namespace PackagesService.Application.Interfaces
     public interface IPackageRepository
     {
         Task AddAsync(Package package,CancellationToken cancellationToken);
-        Task <Package?> GetByIdAsync (PackageId id ,CancellationToken cancellationToken);
+        Task <Package?> GetByIdAsync (Guid id ,CancellationToken cancellationToken);
     }
 }

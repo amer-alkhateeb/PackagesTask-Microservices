@@ -1,6 +1,6 @@
 ﻿namespace PackagesService.Domain.ValueObjects
 {
-    public sealed record class Address
+    public sealed record  Address
     {
         public string Street { get; private set; } = default!;
         public string City { get; private set; } = default!;

@@ -24,7 +24,6 @@ namespace PackagesService.Domain.Models
 
             AddDomainEvent(new PackageCreatedEvent(id));
         }
-
         public static Package Of(string sender, string recipient, Weight weight, Address destination)
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(sender);
