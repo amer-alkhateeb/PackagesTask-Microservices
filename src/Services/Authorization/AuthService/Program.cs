@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using AuthService.Data;
+using AuthService.Data.Seeds;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,9 +42,21 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await SeedRoles.SeedRolesAsync(services);
+}
 
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth API V1");
+    options.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+});
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
