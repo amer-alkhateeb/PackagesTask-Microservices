@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PackagesService.Application.Dtos;
 using PackagesService.Application.Packages.Commands;
@@ -8,6 +9,7 @@ using PackagesService.Domain.ValueObjects;
 
 namespace PackagesService.API.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class PackagesController : ControllerBase

@@ -53,6 +53,17 @@ services:
     ports:
       - "6004:8080"
       - "6064:8081"
+ 
+  authapi:
+    build:
+      context: .
+      dockerfile: src/Services/Authorization/AuthService/Dockerfile
+    depends_on:
+      - sqlserver
+    ports:
+      - "3333:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
 
   packagesapi:
     build:
@@ -60,6 +71,7 @@ services:
       dockerfile: src/Services/Packages/PackagesService.API/Dockerfile
     depends_on:
       - packagespostgres
+      - authapi
     ports:
       - "7777:8080"
     environment:
@@ -71,6 +83,7 @@ services:
       dockerfile: src/Services/Delivery/DeliveryService.API/Dockerfile
     depends_on:
       - sqlserver
+      - authapi
     ports:
       - "1111:8080"
     environment:
