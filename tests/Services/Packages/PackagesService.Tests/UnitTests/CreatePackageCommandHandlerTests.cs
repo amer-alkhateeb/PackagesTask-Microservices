@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PackagesService.Tests
+namespace PackagesService.Tests.UnitTests
 {
     public class CreatePackageCommandHandlerTests
     {

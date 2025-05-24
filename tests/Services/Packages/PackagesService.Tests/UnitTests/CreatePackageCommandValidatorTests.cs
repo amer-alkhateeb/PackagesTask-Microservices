@@ -1,7 +1,7 @@
 ﻿using FluentValidation.TestHelper;
 using PackagesService.Application.Packages.Commands;
 
-namespace PackagesService.Tests
+namespace PackagesService.Tests.UnitTests
 {
     public class CreatePackageCommandValidatorTests
     {
