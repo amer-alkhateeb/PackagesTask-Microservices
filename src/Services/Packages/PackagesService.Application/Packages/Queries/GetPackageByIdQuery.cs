@@ -8,6 +8,6 @@ namespace PackagesService.Application.Packages.Queries
 
     }
 
-    public sealed record GetPackageByIdQueryResult(Guid Id,string Sender, string Recipient, double Weight, string City, string Street, string ZIP);
+    public sealed record GetPackageByIdQueryResult(Guid Id,string Sender, string Recipient, double Weight, string Street, string City, string ZIP);
 
 }
