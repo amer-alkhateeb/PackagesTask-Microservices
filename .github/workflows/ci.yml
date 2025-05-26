@@ -21,13 +21,13 @@ jobs:
           dotnet-version: '9.0.x' 
 
       - name: Restore Dependencies
-        run: dotnet restore
+        run: dotnet restore ./PackagesTask.sln
 
       - name: Build Solution
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build ./PackagesTask.sln --no-restore --configuration Release
 
       - name: Run Unit Tests
-        run: dotnet test --no-build --verbosity normal
+        run: dotnet test ./PackagesTask.sln --no-build --verbosity normal
 
       - name: Check Code Format (Optional Static Analysis)
         run: dotnet format --verify-no-changes || echo "::warning file=*.cs::Code style issues found."
