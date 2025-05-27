@@ -24,14 +24,16 @@ namespace DeliveryService.API.Controllers
             var command = request.Adapt<ScheduleDeliveryRouteCommand>();
             var id = await _mediator.Send(command);
 
-            return CreatedAtAction(nameof(GetById), new { id }, new { id });
+            return CreatedAtAction(nameof(GetById), new { id.Id }, new { id.Id });
         }
 
         [HttpGet("{id:guid}")]
-        public async Task<ActionResult<RouteResponse>> GetById(Guid id)
+        public async Task<IActionResult> GetById(Guid id)
         {
             var result = await _mediator.Send(new GetRouteByIdQuery(id));
-            var response = result.Adapt<RouteResponse>();
+            if (result == null)
+                return NotFound();
+            var response = result.route.Adapt<RouteResponse>();
             return Ok(response);
         }
     }

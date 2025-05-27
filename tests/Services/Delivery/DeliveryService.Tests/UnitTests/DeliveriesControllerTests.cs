@@ -152,27 +152,21 @@ namespace DeliveryService.Tests.UnitTests
         }
 
         [Fact]
-        public async Task GetByTrackingCode_NonExistentTrackingCode_ReturnsOkWithNullResponse()
+        public async Task GetByTrackingCode_NonExistentTrackingCode_ReturnsNotFound()
         {
             // Arrange
             var trackingCode = "NONEXISTENT123";
 
+            // Setup the mediator to return null, simulating a non-existent delivery
             _mediatorMock.Setup(m => m.Send(It.Is<GetDeliveryByTrackingCodeQuery>(q => q.TrackingCode == trackingCode), default))
-                        .ReturnsAsync((GetDeliveryByTrackingCodeQueryResponse)null);
+                         .ReturnsAsync((GetDeliveryByTrackingCodeQueryResponse)null);
 
             // Act
             var result = await _controller.GetByTrackingCode(trackingCode);
 
             // Assert
-            var okResult = Assert.IsType<ActionResult<DeliveryResponse>>(result);
-            var okObjectResult = Assert.IsType<OkObjectResult>(okResult.Result);
-
-            // Since the controller calls .Adapt<DeliveryResponse>() on null, this will throw
-            // This test verifies the current behavior - you might want to add null checking in the controller
-            await Assert.ThrowsAsync<NullReferenceException>(async () =>
-            {
-                await _controller.GetByTrackingCode(trackingCode);
-            });
+            // The result should be a NotFoundResult
+            Assert.IsType<NotFoundResult>(result.Result);
         }
 
         [Fact]

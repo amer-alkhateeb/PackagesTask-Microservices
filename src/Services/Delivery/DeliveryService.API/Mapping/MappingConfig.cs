@@ -1,5 +1,6 @@
 ﻿using DeliveryService.API.Contracts.DTOs;
 using DeliveryService.Application.DeliveryRoutes.Commands;
+using DeliveryService.Application.DeliveryRoutes.Queries;
 using DeliveryService.Application.Dtos;
 using Mapster;
 
@@ -13,10 +14,11 @@ namespace DeliveryService.API.Mapping
 
             TypeAdapterConfig<DeliveryRouteDto, RouteResponse>
                 .NewConfig()
-                .Map(dest => dest.Deliveries, src => src.Deliveries);
+                  .Map(dest => dest.Deliveries, src => src.Deliveries.Adapt<List<DeliverySummary>>());
 
             TypeAdapterConfig<DeliveryDto, DeliverySummary>.NewConfig();
             TypeAdapterConfig<DeliveryDetailsDto, DeliveryResponse>.NewConfig();
+            TypeAdapterConfig<GetDeliveryByTrackingCodeQueryResponse, DeliveryResponse>.NewConfig();
         }
     }
 }
