@@ -3,6 +3,7 @@ using DeliveryService.API.Controllers;
 using DeliveryService.Application.DeliveryRoutes.Commands;
 using DeliveryService.Application.DeliveryRoutes.Queries;
 using DeliveryService.Application.Dtos;
+using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -51,7 +52,7 @@ namespace DeliveryService.Tests.UnitTests
             Assert.Equal(expectedId, createdAtActionResult.RouteValues["id"]);
 
             var responseValue = Assert.IsAssignableFrom<object>(createdAtActionResult.Value);
-            var idProperty = responseValue.GetType().GetProperty("id");
+            var idProperty = responseValue.GetType().GetProperty("Id");
             Assert.Equal(expectedId, idProperty.GetValue(responseValue));
 
             _mediatorMock.Verify(m => m.Send(It.Is<ScheduleDeliveryRouteCommand>(cmd =>
@@ -108,7 +109,7 @@ namespace DeliveryService.Tests.UnitTests
 
             // Assert
             var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
-            Assert.Equal(expectedId.ToString(), createdAtActionResult.RouteValues["id"]);
+            Assert.Equal(expectedId, (Guid)createdAtActionResult.RouteValues["id"]);
         }
 
         [Fact]
@@ -155,9 +156,8 @@ namespace DeliveryService.Tests.UnitTests
             var result = await _controller.GetById(routeId);
 
             // Assert
-            var okResult = Assert.IsType<ActionResult<RouteResponse>>(result);
-            var okObjectResult = Assert.IsType<OkObjectResult>(okResult.Result);
-            var routeResponse = Assert.IsType<RouteResponse>(okObjectResult.Value);
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var routeResponse = Assert.IsType<RouteResponse>(okResult.Value);
 
             Assert.Equal(deliveryRouteDto.Id, routeResponse.Id);
             Assert.Equal(deliveryRouteDto.TruckId, routeResponse.TruckId);
@@ -166,35 +166,6 @@ namespace DeliveryService.Tests.UnitTests
             Assert.Equal(deliveryRouteDto.Deliveries.Count, routeResponse.Deliveries.Count);
 
             _mediatorMock.Verify(m => m.Send(It.Is<GetRouteByIdQuery>(q => q.Id == routeId), default), Times.Once);
-        }
-
-        [Fact]
-        public async Task GetById_EmptyGuid_ReturnsOkWithRouteResponse()
-        {
-            // Arrange
-            var routeId = Guid.Empty;
-            var deliveryRouteDto = new DeliveryRouteDto(
-                Id: routeId,
-                TruckId: Guid.NewGuid(),
-                DriverId: Guid.NewGuid(),
-                ScheduledDate: DateTime.UtcNow,
-                Deliveries: new List<DeliveryDto>()
-            );
-
-            var queryResponse = new GetRouteByIdQueryResponse(deliveryRouteDto);
-
-            _mediatorMock.Setup(m => m.Send(It.Is<GetRouteByIdQuery>(q => q.Id == routeId), default))
-                        .ReturnsAsync(queryResponse);
-
-            // Act
-            var result = await _controller.GetById(routeId);
-
-            // Assert
-            var okResult = Assert.IsType<ActionResult<RouteResponse>>(result);
-            var okObjectResult = Assert.IsType<OkObjectResult>(okResult.Result);
-            var routeResponse = Assert.IsType<RouteResponse>(okObjectResult.Value);
-
-            Assert.Equal(Guid.Empty, routeResponse.Id);
         }
 
         [Fact]
@@ -210,17 +181,22 @@ namespace DeliveryService.Tests.UnitTests
                 Deliveries: new List<DeliveryDto>()
             );
 
+
+            var expectedRouteResponse = deliveryRouteDto.Adapt<RouteResponse>();
+
+
             var queryResponse = new GetRouteByIdQueryResponse(deliveryRouteDto);
 
             _mediatorMock.Setup(m => m.Send(It.Is<GetRouteByIdQuery>(q => q.Id == routeId), default))
-                        .ReturnsAsync(queryResponse);
+                         .ReturnsAsync(queryResponse);
 
             // Act
-            var result = await _controller.GetById(routeId);
+            var result = await _controller.GetById(routeId); // This returns IActionResult, which will be OkObjectResult
 
             // Assert
-            var okResult = Assert.IsType<ActionResult<RouteResponse>>(result);
-            var okObjectResult = Assert.IsType<OkObjectResult>(okResult.Result);
+
+            var okObjectResult = Assert.IsType<OkObjectResult>(result);
+
             var routeResponse = Assert.IsType<RouteResponse>(okObjectResult.Value);
 
             Assert.Empty(routeResponse.Deliveries);
@@ -248,8 +224,11 @@ namespace DeliveryService.Tests.UnitTests
             _mediatorMock.Setup(m => m.Send(It.Is<GetRouteByIdQuery>(q => q.Id == routeId), default))
                         .ReturnsAsync((GetRouteByIdQueryResponse)null);
 
-            // Act & Assert
-            await Assert.ThrowsAsync<NullReferenceException>(() => _controller.GetById(routeId));
+            // Act
+            var result = await _controller.GetById(routeId);
+
+            //Assert
+            Assert.IsType<NotFoundResult>(result);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace DeliveryService.Tests.UnitTests
             var cancellationToken = CancellationToken.None;
 
             _mockRepository.Setup(x => x.AddAsync(It.IsAny<DeliveryRoute>(), cancellationToken))
-                          .ReturnsAsync((DeliveryRoute route) => route);
+                          .ReturnsAsync((DeliveryRoute route, CancellationToken ct) => route);
             _mockUnitOfWork.Setup(x => x.SaveChangesAsync(cancellationToken))
                           .ReturnsAsync(1);
 
@@ -64,7 +64,7 @@ namespace DeliveryService.Tests.UnitTests
 
             _mockRepository.Setup(x => x.AddAsync(It.IsAny<DeliveryRoute>(), cancellationToken))
                           .Callback<DeliveryRoute, CancellationToken>((route, ct) => capturedRoute = route)
-                          .ReturnsAsync((DeliveryRoute route) => route);
+                          .ReturnsAsync((DeliveryRoute route, CancellationToken ct) => route);
             _mockUnitOfWork.Setup(x => x.SaveChangesAsync(cancellationToken))
                           .ReturnsAsync(1);
 
@@ -91,7 +91,7 @@ namespace DeliveryService.Tests.UnitTests
             var cancellationToken = CancellationToken.None;
 
             _mockRepository.Setup(x => x.AddAsync(It.IsAny<DeliveryRoute>(), cancellationToken))
-                          .ReturnsAsync((DeliveryRoute route) => route);
+                          .ReturnsAsync((DeliveryRoute route, CancellationToken ct) => route);
             _mockUnitOfWork.Setup(x => x.SaveChangesAsync(cancellationToken))
                           .ReturnsAsync(1);
 
@@ -140,7 +140,7 @@ namespace DeliveryService.Tests.UnitTests
             var expectedException = new InvalidOperationException("Save failed");
 
             _mockRepository.Setup(x => x.AddAsync(It.IsAny<DeliveryRoute>(), cancellationToken))
-                          .ReturnsAsync((DeliveryRoute route) => route);
+                                        .ReturnsAsync((DeliveryRoute route, CancellationToken ct) => route);
             _mockUnitOfWork.Setup(x => x.SaveChangesAsync(cancellationToken))
                           .ThrowsAsync(expectedException);
 
@@ -164,8 +164,8 @@ namespace DeliveryService.Tests.UnitTests
             DeliveryRoute capturedRoute = null;
 
             _mockRepository.Setup(x => x.AddAsync(It.IsAny<DeliveryRoute>(), cancellationToken))
-                          .Callback<DeliveryRoute, CancellationToken>((route, ct) => capturedRoute = route)
-                          .ReturnsAsync((DeliveryRoute route) => route);
+                           .Callback<DeliveryRoute, CancellationToken>((route, ct) => capturedRoute = route)
+                           .ReturnsAsync((DeliveryRoute route, CancellationToken ct) => route);
             _mockUnitOfWork.Setup(x => x.SaveChangesAsync(cancellationToken))
                           .ReturnsAsync(1);
 

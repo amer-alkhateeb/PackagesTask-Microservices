@@ -21,7 +21,9 @@ namespace DeliveryService.API.Controllers
         public async Task<ActionResult<DeliveryResponse>> GetByTrackingCode(string trackingCode)
         {
             var delivery = await _mediator.Send(new GetDeliveryByTrackingCodeQuery(trackingCode));
-            return Ok(delivery.Adapt<DeliveryResponse>());
+            if (delivery == null)
+                return NotFound();
+            return Ok(delivery.DeliveryDetails.Adapt<DeliveryResponse>());
         }
     }
 }
