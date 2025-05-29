@@ -4,8 +4,24 @@ using DeliveryService.Application;
 using DeliveryService.Infrastructure;
 using DeliveryService.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+using Serilog.Sinks.Elasticsearch;
+
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithEnvironmentName()
+    .Enrich.WithThreadId()
+    .Enrich.WithProperty("Service", "DeliveryService")
+    .WriteTo.Console()
+    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://elasticsearch:9200"))
+    {
+        AutoRegisterTemplate = true,
+        IndexFormat = $"packagestask-{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")?.ToLower().Replace(".", "-")}-{DateTime.UtcNow:yyyy-MM}"
+    })
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
 
 
 
