@@ -16,18 +16,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up .NET
-        uses: actions/setup-dotnet@v3
+      - name: Setup .NET 9 SDK
+        uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: 9.0.x
 
-      - name: Restore Dependencies
+      - name: Restore dependencies
         run: dotnet restore ./PackagesTask.sln
 
-      - name: Build
+      - name: Build solution
         run: dotnet build ./PackagesTask.sln --configuration Release --no-restore
 
       - name: Run Unit Tests for AuthService
