@@ -30,14 +30,15 @@ jobs:
       - name: Build
         run: dotnet build ./PackagesTask.sln --configuration Release --no-restore
 
-      - name: Run Tests - AuthService
-        run: dotnet test ./tests/Services/Auth/AuthService.Tests/AuthService.Tests.csproj --no-build
+      - name: Run Unit Tests for AuthService
+        run: dotnet test ./tests/Services/Auth/AuthService.Tests/AuthService.Tests.csproj --configuration Release --no-build
 
-      - name: Run Tests - DeliveryService
-        run: dotnet test ./tests/Services/Delivery/DeliveryService.Tests/DeliveryService.Tests.csproj --no-build
+      - name: Run Unit Tests for DeliveryService
+        run: dotnet test ./tests/Services/Delivery/DeliveryService.Tests/DeliveryService.Tests.csproj --configuration Release --no-build
 
-      - name: Run Tests - PackagesService
-        run: dotnet test ./tests/Services/Packages/PackagesService.Tests/PackagesService.Tests.csproj --no-build
+      - name: Run Unit Tests for PackagesService
+        run: dotnet test ./tests/Services/Packages/PackagesService.Tests/PackagesService.Tests.csproj --configuration Release --no-build
+
 
       # -----------------------------
       # PUSH TO GHCR
