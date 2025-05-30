@@ -1,0 +1,28 @@
+version: '3.9'
+
+services:
+  yarpapigateway:
+    build:
+      context: .
+      dockerfile: src/APIsGateway/YarpAPIsGateway/Dockerfile
+
+  authapi:
+    build:
+      context: .
+      dockerfile: src/Services/Authorization/AuthService/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  packagesapi:
+    build:
+      context: .
+      dockerfile: src/Services/Packages/PackagesService.API/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+  deliveryapi:
+    build:
+      context: .
+      dockerfile: src/Services/Delivery/DeliveryService.API/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
