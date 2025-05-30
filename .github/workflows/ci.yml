@@ -1,4 +1,4 @@
-name: CI Build and Test
+name: CI & Push to GHCR
 
 on:
   push:
@@ -6,34 +6,57 @@ on:
   pull_request:
     branches: [ master ]
 
+
+permissions:
+  contents: read
+  packages: write 
+
 jobs:
-  build-test:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup .NET 9 SDK
-        uses: actions/setup-dotnet@v4
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: '9.0.x'
 
-      - name: Restore dependencies
+      - name: Restore Dependencies
         run: dotnet restore ./PackagesTask.sln
 
-      - name: Build solution
+      - name: Build
         run: dotnet build ./PackagesTask.sln --configuration Release --no-restore
 
-      - name: Run Unit Tests for AuthService
-        run: dotnet test ./tests/Services/Auth/AuthService.Tests/AuthService.Tests.csproj --configuration Release --no-build
+      - name: Run Tests - AuthService
+        run: dotnet test ./tests/Services/Auth/AuthService.Tests/AuthService.Tests.csproj --no-build
 
-      - name: Run Unit Tests for DeliveryService
-        run: dotnet test ./tests/Services/Delivery/DeliveryService.Tests/DeliveryService.Tests.csproj --configuration Release --no-build
+      - name: Run Tests - DeliveryService
+        run: dotnet test ./tests/Services/Delivery/DeliveryService.Tests/DeliveryService.Tests.csproj --no-build
 
-      - name: Run Unit Tests for PackagesService
-        run: dotnet test ./tests/Services/Packages/PackagesService.Tests/PackagesService.Tests.csproj --configuration Release --no-build
+      - name: Run Tests - PackagesService
+        run: dotnet test ./tests/Services/Packages/PackagesService.Tests/PackagesService.Tests.csproj --no-build
 
-      # Optional: Docker image build (can add push later)
-      - name: Build Docker Images
-        run: docker compose -f docker-compose.yml build
+      # -----------------------------
+      # PUSH TO GHCR
+      # -----------------------------
+      - name: Log in to GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build and Push AuthService
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/auth-service:latest ./src/Services/Authorization/AuthService
+          docker push ghcr.io/${{ github.repository_owner }}/auth-service:latest
+
+      - name: Build and Push DeliveryService
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/delivery-service:latest ./src/Services/Delivery/DeliveryService.API
+          docker push ghcr.io/${{ github.repository_owner }}/delivery-service:latest
+
+      - name: Build and Push PackagesService
+        run: |
+          docker build -t ghcr.io/${{ github.repository_owner }}/packages-service:latest ./src/Services/Packages/PackagesService.API
+          docker push ghcr.io/${{ github.repository_owner }}/packages-service:latest
+
