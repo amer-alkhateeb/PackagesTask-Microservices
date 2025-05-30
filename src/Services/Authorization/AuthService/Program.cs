@@ -9,6 +9,9 @@ using AuthService.Data;
 using AuthService.Data.Seeds;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -36,7 +39,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AuthDbContext>()
 .AddDefaultTokenProviders();
 
-// 3. Configure JWT manually (instead of IdentityServer for tokens)
+// Configure JWT
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -60,7 +63,17 @@ builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddHealthChecks()
+    .AddSqlServer(builder.Configuration.GetConnectionString("SqlServer"), name: "sqlserver", failureStatus: HealthStatus.Unhealthy)
+    .AddCheck("self", () => HealthCheckResult.Healthy());
+
+builder.Services.AddHealthChecksUI(setupSettings =>
+{
+    setupSettings.AddHealthCheckEndpoint("Auth Service", "/health");
+}).AddInMemoryStorage();
+
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -71,9 +84,20 @@ app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
     options.SwaggerEndpoint("/swagger/v1/swagger.json", "Auth API V1");
-    options.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
+    options.RoutePrefix = string.Empty;
 });
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    Predicate = _ => true,
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+app.MapHealthChecksUI();
+
 app.Run();

@@ -6,6 +6,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RabbitMQ.Client;
 
 namespace DeliveryService.Infrastructure
 {
@@ -16,8 +17,7 @@ namespace DeliveryService.Infrastructure
             services.AddDbContext<DeliveryDbContext>(options =>
                 options.UseSqlServer(config.GetConnectionString("SqlServer")));
 
-
-            // Add MassTransit with RabbitMQ
+            // Add MassTransit with RabbitMQ  
             services.AddMassTransit(x =>
             {
                 x.SetKebabCaseEndpointNameFormatter();
@@ -34,12 +34,22 @@ namespace DeliveryService.Infrastructure
                 });
             });
 
-            // Register publisher abstraction
 
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<IDeliveryRouteRepository, DeliveryRouteRepository>();
             services.AddScoped<IIntegrationEventPublisher, MassTransitIntegrationEventPublisher>();
+
+            services.AddHealthChecks()
+                .AddSqlServer(config.GetConnectionString("SqlServer"), name: "SQL Server")
+                .AddRabbitMQ(sp =>
+                {
+                    var factory = new ConnectionFactory
+                    {
+                        Uri = new Uri("amqp://guest:guest@rabbitmq")
+                    };
+                    return factory.CreateConnectionAsync();
+                }, name: "RabbitMQ");
             return services;
         }
     }

@@ -3,9 +3,11 @@ using DeliveryService.API.Middleware;
 using DeliveryService.Application;
 using DeliveryService.Infrastructure;
 using DeliveryService.Infrastructure.Persistence;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Sinks.Elasticsearch;
+using System.Text.Json;
 
 Log.Logger = new LoggerConfiguration()
     .Enrich.FromLogContext()
@@ -52,5 +54,25 @@ app.UseSwaggerUI(options =>
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = async (context, report) =>
+    {
+        context.Response.ContentType = "application/json";
 
+        var result = JsonSerializer.Serialize(new
+        {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(entry => new
+            {
+                name = entry.Key,
+                status = entry.Value.Status.ToString(),
+                description = entry.Value.Description
+            }),
+            duration = report.TotalDuration
+        });
+
+        await context.Response.WriteAsync(result);
+    }
+});
 app.Run();

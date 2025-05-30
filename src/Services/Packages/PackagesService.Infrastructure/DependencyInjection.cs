@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using PackagesService.Application.Interfaces;
 using PackagesService.Application.Messaging;
 using PackagesService.Infrastructure.Persistence;
+using RabbitMQ.Client;
 namespace PackagesService.Infrastructure
 {
     public static class DependencyInjection
@@ -36,6 +37,19 @@ namespace PackagesService.Infrastructure
             });
 
             services.AddScoped<IPackageRepository, PackagesRepository>();
+
+            services.AddHealthChecks()
+                .AddNpgSql(config.GetConnectionString("Postgres"),
+                    name: "postgresql",
+                    timeout: TimeSpan.FromSeconds(5))
+               .AddRabbitMQ(sp =>
+               {
+                   var factory = new ConnectionFactory
+                   {
+                       Uri = new Uri("amqp://guest:guest@rabbitmq")
+                   };
+                   return factory.CreateConnectionAsync();
+               }, name: "RabbitMQ");
 
             return services;
         }
