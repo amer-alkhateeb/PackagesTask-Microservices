@@ -48,16 +48,25 @@ jobs:
 
       - name: Build and Push AuthService
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/auth-service:latest ./src/Services/Authorization/AuthService
-          docker push ghcr.io/${{ github.repository_owner }}/auth-service:latest
+           docker build \
+              -t ghcr.io/${{ github.repository_owner }}/auth-service:latest \
+              -f src/Services/Authorization/AuthService/Dockerfile \
+              .  # context is the root
+            docker push ghcr.io/${{ github.repository_owner }}/auth-service:latest
 
       - name: Build and Push DeliveryService
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/delivery-service:latest ./src/Services/Delivery/DeliveryService.API
-          docker push ghcr.io/${{ github.repository_owner }}/delivery-service:latest
+           docker build \
+              -t ghcr.io/${{ github.repository_owner }}/delivery-service:latest \
+              -f src/Services/Delivery/DeliveryService.API/Dockerfile \
+              .  # context is the root
+            docker push ghcr.io/${{ github.repository_owner }}/delivery-service:latest
 
       - name: Build and Push PackagesService
         run: |
-          docker build -t ghcr.io/${{ github.repository_owner }}/packages-service:latest ./src/Services/Packages/PackagesService.API
-          docker push ghcr.io/${{ github.repository_owner }}/packages-service:latest
+           docker build \
+              -t ghcr.io/${{ github.repository_owner }}/packages-service:latest \
+              -f src/Services/Packages/PackagesService.API/Dockerfile \
+              .  # context is the root
+            docker push ghcr.io/${{ github.repository_owner }}/packages-service:latest
 
